@@ -50,6 +50,16 @@ your-esphome-config/
 │       └── catnip_soil_sensor.cpp
 └── your-device.yaml
 ```
+and load the external component with
+
+```
+# Load external component
+external_components:
+  - source:
+      type: local
+      path: components
+```
+or skip this step and let ESP home downlaad the repository for you
 
 ### 2. Configure ESPHome
 
@@ -65,8 +75,10 @@ i2c:
 # Load external component
 external_components:
   - source:
-      type: local
-      path: components
+      type: git
+      url: https://github.com/jbeker/catnip_soil_sensor
+      ref: main
+    components: [catnip_soil_sensor]
 
 # Configure sensor
 sensor:
@@ -129,7 +141,7 @@ This component exports raw capacitance values. To calculate moisture percentage,
            state: >
              {% set dry_value = 290 %}
              {% set wet_value = 650 %}
-             {% set raw = states('sensor.soil_capacitance') | float %}
+             {% set raw = states('sensor.soil_moisture_sensor_soil_capacitance') | float(0) %}
              {% set moisture = ((raw - dry_value) / (wet_value - dry_value) * 100) | round(1) %}
              {{ [0, [moisture, 100] | min] | max }}
    ```
